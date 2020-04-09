@@ -2,6 +2,8 @@
 
 Artemis is an experimental hooks library that mirrors [v3 of Apollo Client api](https://www.apollographql.com/docs/react/v3.0-beta/data/queries/) for use with RESTish apis. The idea is to provide a common api pattern for accessing all apis graphql and REST.
 
+A [Justworks](https://grnh.se/ade4dbf91) sponsored project.
+
 ## API
 
 ### Query Interface
