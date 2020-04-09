@@ -10,7 +10,7 @@ Sometimes you want to GET data right away.
 
 ```jsx
 import React from 'react';
-import { useQuery } from 'utils/kim';
+import { useQuery } from 'artemis-client';
 
 const CatPhoto = ({ breed }) => {
   const { loading, error, data, refetch } = useQuery(CAT_PHOTO_PATH, {
