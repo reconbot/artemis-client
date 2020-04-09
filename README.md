@@ -1,4 +1,44 @@
-# TSDX React User Guide
+# Artemis Client
+
+Artemis is an experimental hooks library that mirrors [v3 of Apollo Client api](https://www.apollographql.com/docs/react/v3.0-beta/data/queries/) for use with RESTish apis. The idea is to provide a common api pattern for accessing all apis graphql and REST.
+
+## API
+
+### Query Interface
+
+Sometimes you want to GET data right away.
+
+```jsx
+import React from 'react';
+import { useQuery } from 'utils/kim';
+
+const CatPhoto = ({ breed }) => {
+  const { loading, error, data, refetch } = useQuery(CAT_PHOTO_PATH, {
+    variables: { breed },
+    skip: !breed,
+  });
+
+  if (loading) return `Loading`;
+  if (error) return `Error! ${error.message}`;
+
+  return (
+    <div>
+      <img src={data.cat.displayImage} style={{ height: 100, width: 100 }} />
+      <button onClick={() => refetch()}>Refetch!</button>
+    </div>
+  );
+}
+```
+
+## TODO
+
+- Testing approach
+- Lazy Query
+- Mutation
+
+## TSDX
+
+This project uses TSDX which is pretty rad, it's readme is below.
 
 Congrats! You just saved yourself hours of work by bootstrapping this project with TSDX. Let’s get you oriented with what’s here and how to use it.
 

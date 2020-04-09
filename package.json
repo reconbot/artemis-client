@@ -32,6 +32,7 @@
     "trailingComma": "es5"
   },
   "name": "artemis-client",
+  "description": "Artemis is an experimental hooks library that mirrors v3 of Apollo Client api",
   "author": "Francis Gulotta",
   "module": "dist/artemis-client.esm.js",
   "devDependencies": {
