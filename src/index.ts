@@ -23,6 +23,17 @@ interface ValueState<T> {
   data: T
 }
 
+const startFetch = (url: string, { variables }: { variables?: object } = {}) => {
+  const abortController = new AbortController()
+  console.log('ignoring variables because reasons', { variables })
+  const promise = fetch(url, { signal: abortController.signal })
+    .then(async resp => resp.json())
+
+  const abort = () => abortController.abort()
+
+  return { promise, abort }
+}
+
 export const useQuery = <T extends any>(
   url: string,
   options: QueryOptions = {}
@@ -35,46 +46,32 @@ export const useQuery = <T extends any>(
     }
   )
 
-  const [reloadTrigger, setReload] = useState(true)
   const [variables, setVariables] = useState(options.variables)
 
-  useEffect(() => {
-    setVariables(options.variables)
-  }, [options.variables])
+  useEffect(() => setVariables(options.variables), [options.variables])
 
-  useEffect(() => {
-    const abort = new AbortController()
-    fetch(url, { signal: abort.signal })
-      .then(async resp => {
-        const data = await resp.json()
-        setState({
-          loading: false,
-          error: null,
-          data,
-        })
+  const doFetch = (vars = variables) => {
+    const { promise, abort } = startFetch(url, { variables: vars })
+    promise.then(data => {
+      setState({
+        loading: false,
+        error: null,
+        data,
       })
-      .catch((error: Error) => {
-        setState({
-          loading: false,
-          error,
-          data: null,
-        })
+    }, (error: Error) => {
+      setState({
+        loading: false,
+        error,
+        data: null,
       })
+    })
 
-    return () => {
-      abort.abort()
-    }
-  }, [url, variables, reloadTrigger])
+    return abort
+  }
 
-  const refetch = useCallback(
-    variables => {
-      if (variables) {
-        setVariables(variables)
-      }
-      setReload(!reloadTrigger)
-    },
-    [reloadTrigger]
-  )
+  useEffect(() => doFetch(), [url, variables])
+
+  const refetch = useCallback(doFetch, [url, variables])
 
   console.log(state)
   return {
