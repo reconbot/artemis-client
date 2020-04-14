@@ -11,11 +11,15 @@ interface LoadingState<T> {
   data?: T
 }
 
-const startFetch = (url: string, { variables }: { variables?: object } = {}) => {
+const startFetch = (
+  url: string,
+  { variables }: { variables?: object } = {}
+) => {
   const abortController = new AbortController()
   console.log('ignoring variables because reasons', { variables })
-  const promise = fetch(url, { signal: abortController.signal })
-    .then(async resp => resp.json())
+  const promise = fetch(url, {
+    signal: abortController.signal,
+  }).then(async resp => resp.json())
 
   const abort = () => abortController.abort()
 
@@ -26,13 +30,11 @@ export const useQuery = <T extends any>(
   url: string,
   options: QueryOptions = {}
 ) => {
-  const [state, setState] = useState<LoadingState<T>>(
-    {
-      loading: true,
-      data: undefined,
-      error: undefined,
-    }
-  )
+  const [state, setState] = useState<LoadingState<T>>({
+    loading: true,
+    data: undefined,
+    error: undefined,
+  })
 
   const [variables, setVariables] = useState(options.variables)
 
@@ -45,19 +47,22 @@ export const useQuery = <T extends any>(
       data: state.data,
     })
     const { promise, abort } = startFetch(url, { variables: vars })
-    promise.then(data => {
-      setState({
-        loading: false,
-        error: undefined,
-        data,
-      })
-    }, (error: Error) => {
-      setState({
-        loading: false,
-        error,
-        data: state.data,
-      })
-    })
+    promise.then(
+      data => {
+        setState({
+          loading: false,
+          error: undefined,
+          data,
+        })
+      },
+      (error: Error) => {
+        setState({
+          loading: false,
+          error,
+          data: state.data,
+        })
+      }
+    )
 
     return abort
   }
