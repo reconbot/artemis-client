@@ -47,8 +47,8 @@ const Pokemon = ({ name }) => {
 }
 
 const POKEMON_QUERY = gql`
-query {
-  pokemon(name: "pikachu") {
+query getPokemon($name: String) {
+  pokemon(name: $name) {
     name
     image
   }
@@ -56,7 +56,7 @@ query {
 `;
 
 const GraphQLPokemon = ({ name }) => {
-  const { refetch, data, loading, error } = useApolloQuery(POKEMON_QUERY)
+  const { refetch, data, loading, error } = useApolloQuery(POKEMON_QUERY, { variables: { name }})
   console.log({ apollo: { refetch, data, loading, error }})
   if (loading) {
     return (<div><h1>Loading</h1></div>)
@@ -80,11 +80,22 @@ const GraphQLPokemon = ({ name }) => {
 }
 
 const App = () => {
+  const [pokemon, updatePokemon] = React.useState('pikachu')
+  const [input, updateInput] = React.useState(pokemon)
+  const searchPokemon = e => {
+    e.preventDefault()
+    updatePokemon(input)
+  }
+
   return (
     <ApolloProvider client={client}>
+      <form onSubmit={searchPokemon}>
+        <input value={input} onChange={event => updateInput(event.target.value) }></input>
+        <button>Search</button>
+      </form>
       <div>
-        <Pokemon name="pikachu" />
-        <GraphQLPokemon name="pikachu" />
+        <Pokemon name={pokemon} />
+        <GraphQLPokemon name={pokemon} />
       </div>
     </ApolloProvider>
   )
