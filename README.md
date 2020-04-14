@@ -37,6 +37,8 @@ const CatPhoto = ({ breed }) => {
 - Testing approach
 - Lazy Query
 - Mutation
+- query shouldn't update state twice on load
+- refetch shouldn't update state if data didn't change
 
 ## TSDX
 

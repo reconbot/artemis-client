@@ -5,22 +5,10 @@ interface QueryOptions {
   variables?: object
 }
 
-interface ErrorState {
-  loading: false
-  error: Error
-  data: null
-}
-
-interface LoadingState {
-  loading: true
-  error: null
-  data: null
-}
-
-interface ValueState<T> {
-  loading: false
-  error: null
-  data: T
+interface LoadingState<T> {
+  loading: boolean
+  error?: Error
+  data?: T
 }
 
 const startFetch = (url: string, { variables }: { variables?: object } = {}) => {
@@ -38,11 +26,11 @@ export const useQuery = <T extends any>(
   url: string,
   options: QueryOptions = {}
 ) => {
-  const [state, setState] = useState<ErrorState | LoadingState | ValueState<T>>(
+  const [state, setState] = useState<LoadingState<T>>(
     {
       loading: true,
-      data: null,
-      error: null,
+      data: undefined,
+      error: undefined,
     }
   )
 
@@ -51,18 +39,23 @@ export const useQuery = <T extends any>(
   useEffect(() => setVariables(options.variables), [options.variables])
 
   const doFetch = (vars = variables) => {
+    setState({
+      loading: true,
+      error: undefined,
+      data: state.data,
+    })
     const { promise, abort } = startFetch(url, { variables: vars })
     promise.then(data => {
       setState({
         loading: false,
-        error: null,
+        error: undefined,
         data,
       })
     }, (error: Error) => {
       setState({
         loading: false,
         error,
-        data: null,
+        data: state.data,
       })
     })
 
@@ -73,7 +66,6 @@ export const useQuery = <T extends any>(
 
   const refetch = useCallback(doFetch, [url, variables])
 
-  console.log(state)
   return {
     ...state,
     refetch,
