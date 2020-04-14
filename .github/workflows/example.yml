@@ -1,4 +1,4 @@
-name: CI
+name: Deploy Site
 on:
   push:
     branches:
@@ -43,7 +43,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          cd dist
+          cd example/dist
           echo -n 'Files to Commit:' && find . -type f | wc -l
           git init
           git config user.name "${GITHUB_ACTOR}"
